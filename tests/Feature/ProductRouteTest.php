@@ -43,9 +43,23 @@ class ProductRouteTest extends TestCase
 
         DB::shouldReceive("select")->once()->andReturn($responseContent);
 
-        $response = $this->getJson('/api/product');
+        $response = $this->getJson('/api/product/1');
 
         $response->assertExactJson($responseContent);
         $response->assertStatus(200);
+    }
+
+
+    public function test_if_return_an_error_message_with_status_404(): void
+    {
+
+        $responseContent = ["message" => "Product not found"];
+
+        DB::shouldReceive("select")->once()->andReturn([]);
+
+        $response = $this->getJson('/api/product/1');
+
+        $response->assertExactJson($responseContent);
+        $response->assertStatus(404);
     }
 }

@@ -23,7 +23,11 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $product_id = DB::table('products')->insertGetId(
+            ['name' => $request->name]
+        );
+        $product = DB::select('select * from products where id = ?', [$product_id]);
+        return response()->json($product, 201);
     }
 
     /**
