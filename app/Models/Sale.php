@@ -9,9 +9,10 @@ class Sale extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["date"];
-    protected $dateFormat = 'd-m-Y';
-    public $timestamps = false;
+    protected $table = 'sales';
+    protected $fillable = [
+        //
+    ];
 
     public function products()
     {
