@@ -62,4 +62,48 @@ class ProductRouteTest extends TestCase
         $response->assertExactJson($responseContent);
         $response->assertStatus(404);
     }
+
+    public function test_if_return_a_new_product_when_create_with_status_201(): void
+    {
+        $insertResponse = "4";
+        $responseContent = [
+            [
+                "id" => 4,
+                "name" => "ProductX"
+            ]
+        ];
+
+        DB::shouldReceive("table->insertGetId")->once()->andReturn($insertResponse);
+        DB::shouldReceive("select")->once()->andReturn($responseContent);
+
+        $response = $this->postJson('/api/product', ['name' => 'ProductX']);
+
+        $response->assertExactJson($responseContent);
+        $response->assertStatus(201);
+    }
+
+    public function test_if_return_an_error_status_400_when_missing_name_field_with(): void
+    {
+        $responseContent = [
+            "message" => "name is required"
+        ];
+
+
+        $response = $this->postJson('/api/product', ['na' => 'ProductX']);
+
+        $response->assertExactJson($responseContent);
+        $response->assertStatus(400);
+    }
+
+    public function test_if_return_an_error_status_400_when_name_field_is_too_short(): void
+    {
+        $responseContent = [
+            "message" => "name must be at least 5 characters long"
+        ];
+
+        $response = $this->postJson('/api/product', ['name' => 'P']);
+
+        $response->assertExactJson($responseContent);
+        $response->assertStatus(400);
+    }
 }
