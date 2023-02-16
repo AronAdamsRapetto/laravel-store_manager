@@ -67,8 +67,18 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
-        //
+        $isProductExist = DB::select('select * from products where id = ?', [$id]);
+
+        if (!count($isProductExist)) {
+            return response()->json([
+                "message" => "Product not found!"
+            ], 404);
+        }
+
+        DB::delete('delete from products where id = ?', [$id]);
+
+        return response('No-Content', 204);
     }
 }
