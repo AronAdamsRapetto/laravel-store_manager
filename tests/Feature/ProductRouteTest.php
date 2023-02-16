@@ -175,4 +175,29 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(404);
         $response->assertExactJson($responseContent);
     }
+
+    public function test_if_delete_product_return_nothing_with_status_204()
+    {
+        DB::shouldReceive('select')->once()->andReturn(["some product"]);
+        DB::shouldReceive('delete')->once();
+
+        $response = $this->deleteJson('api/product/1');
+
+        $response->assertStatus(204);
+        $response->assertNoContent();
+    }
+
+    public function test_if_delete_product_return_a_error_404_when_product_not_exist()
+    {
+        $responseContent = [
+            "message" => "Product not found!"
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn([]);
+
+        $response = $this->deleteJson('api/product/1');
+
+        $response->assertStatus(404);
+        $response->assertExactJson($responseContent);
+    }
 }
