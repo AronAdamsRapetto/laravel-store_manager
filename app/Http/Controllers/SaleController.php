@@ -29,7 +29,7 @@ class SaleController extends Controller
                 [$sale_id, $sale["productId"], $sale["quantity"]]
             );
         }
-        return response()->json(["id" => $sale_id, "itemsSold" => $sales]);
+        return response()->json(["id" => $sale_id, "itemsSold" => $sales], 201);
     }
 
     /**
