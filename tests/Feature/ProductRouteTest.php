@@ -9,7 +9,7 @@ use Tests\TestCase;
 
 class ProductRouteTest extends TestCase
 {
-    public function test_if_return_a_list_of_products_with_status_200(): void
+    public function test_if_get_product_return_a_list_of_products_with_status_200(): void
     {
 
         $responseContent = [
@@ -31,7 +31,7 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function test_if_return_one_product_with_status_200(): void
+    public function test_if_get_product_by_id_return_one_product_with_status_200(): void
     {
 
         $responseContent = [
@@ -50,7 +50,7 @@ class ProductRouteTest extends TestCase
     }
 
 
-    public function test_if_return_an_error_message_with_status_404(): void
+    public function test_if_get_product_by_id_return_a_error_message_with_status_404_when_product_not_exist(): void
     {
 
         $responseContent = ["message" => "Product not found"];
@@ -63,7 +63,7 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function test_if_return_a_new_product_when_create_with_status_201(): void
+    public function test_if_store_product_route_return_a_new_product_with_status_201(): void
     {
         $insertResponse = "4";
         $responseContent = [
@@ -82,7 +82,7 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function test_if_return_an_error_status_400_when_missing_name_field(): void
+    public function test_if_store_product_route_return_a_error_status_400_when_missing_name_field(): void
     {
         $responseContent = [
             "message" => "name is required"
@@ -95,7 +95,7 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(400);
     }
 
-    public function test_if_return_an_error_status_400_when_name_field_is_too_short(): void
+    public function test_if_store_product_route_return_a_error_status_400_when_name_field_is_too_short(): void
     {
         $responseContent = [
             "message" => "name must be at least 5 characters long"
@@ -105,5 +105,74 @@ class ProductRouteTest extends TestCase
 
         $response->assertExactJson($responseContent);
         $response->assertStatus(400);
+    }
+
+    public function test_if_update_product_by_id_route_return_a_updated_product_with_status_200()
+    {
+        $responseContent = [
+            [
+                "id" => 1,
+                "name" => "ProdutoY"
+            ]
+        ];
+
+        $requestContent = [
+            "name" => "ProdutoY"
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn(["some product"]);
+        DB::shouldReceive('update')->once();
+        DB::shouldReceive('select')->once()->andReturn($responseContent);
+
+        $response = $this->putJson('/api/product/1', $requestContent);
+
+        $response->assertStatus(200);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_update_product_by_id_route_return_a_error_status_400_when_missing_field_name()
+    {
+        $responseContent = [
+            "message" => "name is required"
+        ];
+
+        $response = $this->putJson('/api/product/1');
+
+        $response->assertStatus(400);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_update_product_by_id_route_return_a_error_status_400_when_field_name_is_too_short()
+    {
+        $responseContent = [
+            "message" => "name must be at least 5 characters long"
+        ];
+
+        $requestContent = [
+            "name" => "P"
+        ];
+
+        $response = $this->putJson('/api/product/1', $requestContent);
+
+        $response->assertStatus(400);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_update_product_by_id_route_return_a_error_status_400_when_product_not_exist()
+    {
+        $responseContent = [
+            "message" => "Product not found!"
+        ];
+
+        $requestContent = [
+            "name" => "ProdutoY"
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn([]);
+
+        $response = $this->putJson('/api/product/99', $requestContent);
+
+        $response->assertStatus(404);
+        $response->assertExactJson($responseContent);
     }
 }

@@ -49,13 +49,15 @@ class ProductController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $isProductExist = DB::update('update products set name = ? where id = ?', [$request["name"], $id]);
+        $isProductExist = DB::select('select * from products where id = ?', [$id]);
 
-        if (!$isProductExist) {
+        if (!count($isProductExist)) {
             return response()->json([
                 "message" => "Product not found!"
             ], 404);
         }
+
+        DB::update('update products set name = ? where id = ?', [$request["name"], $id]);
 
         $updatedProduct = DB::select('select * from products where id = ?', [$id]);
 
