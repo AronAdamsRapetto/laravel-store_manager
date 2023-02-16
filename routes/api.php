@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,4 +24,8 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product', 'index');
     Route::get('/product/{id}', 'show');
     Route::post('/product', 'store')->middleware('verifyProduct');
+});
+
+Route::controller(SaleController::class)->group(function () {
+    Route::post('sale', 'store')->middleware(['verifySale', 'consultProduct']);
 });
