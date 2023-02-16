@@ -24,6 +24,7 @@ Route::controller(ProductController::class)->group(function () {
     Route::get('/product', 'index');
     Route::get('/product/{id}', 'show');
     Route::post('/product', 'store')->middleware('verifyProduct');
+    Route::put('/product/{id}', 'update')->middleware('verifyProduct');
 });
 
 Route::controller(SaleController::class)->group(function () {

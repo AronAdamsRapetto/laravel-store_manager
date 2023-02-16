@@ -47,9 +47,19 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
-        //
+        $isProductExist = DB::update('update products set name = ? where id = ?', [$request["name"], $id]);
+
+        if (!$isProductExist) {
+            return response()->json([
+                "message" => "Product not found!"
+            ], 404);
+        }
+
+        $updatedProduct = DB::select('select * from products where id = ?', [$id]);
+
+        return response()->json($updatedProduct, 200);
     }
 
     /**
