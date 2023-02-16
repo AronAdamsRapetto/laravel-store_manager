@@ -13,7 +13,7 @@ class SaleRouteTest extends TestCase
     /**
      * A basic feature test example.
      */
-    public function test_if_can_store_sale_with_success(): void
+    public function test_if_route_post_sale_can_store_sale_with_success(): void
     {
         $requestContent = [
             [
@@ -41,7 +41,7 @@ class SaleRouteTest extends TestCase
         $response->assertExactJson($responseContent);
     }
 
-    public function test_if_return_400_error_when_some_productId_is_missing(): void
+    public function test_if_route_post_sale_return_400_error_when_some_productId_is_missing(): void
     {
         $requestContent = [
             [
@@ -67,7 +67,7 @@ class SaleRouteTest extends TestCase
         $response->assertExactJson($responseContent);
     }
 
-    public function test_if_return_400_error_when_some_quantity_is_missing(): void
+    public function test_if_route_post_sale_return_400_error_when_some_quantity_is_missing(): void
     {
         $requestContent = [
             [
@@ -93,7 +93,7 @@ class SaleRouteTest extends TestCase
         $response->assertExactJson($responseContent);
     }
 
-    public function test_if_return_404_error_when_some_product_not_exist(): void
+    public function test_if_route_post_sale_return_404_error_when_some_product_not_exist(): void
     {
         $requestContent = [
             [
@@ -117,6 +117,68 @@ class SaleRouteTest extends TestCase
         DB::shouldReceive('select')->once()->andReturn([]);
 
         $response = $this->postJson('api/sale', $requestContent);
+
+        $response->assertStatus(404);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_get_sale_return_all_sales()
+    {
+        $responseContent = [
+            [
+                "sale_id" => 1,
+                "date" => "2023-02-16 17:02:29",
+                "product_id" => 2,
+                "quantity" => 4
+            ],
+            [
+                "sale_id" => 2,
+                "date" => "2023-02-16 17:02:28",
+                "product_id" => 1,
+                "quantity" => 8
+            ],
+        ];
+
+        DB::shouldReceive('table->join->select->get')->once()->andReturn($responseContent);
+
+        $response = $this->getJson('api/sale');
+
+        $response->assertStatus(200);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_get_sale_by_id_return_one_sale()
+    {
+        $responseContent = [
+            [
+                "date" => "2023-02-16 17:02:29",
+                "product_id" => 2,
+                "quantity" => 4
+            ],
+            [
+                "date" => "2023-02-16 17:02:28",
+                "product_id" => 1,
+                "quantity" => 8
+            ],
+        ];
+
+        DB::shouldReceive('table->join->select->where->get')->once()->andReturn($responseContent);
+
+        $response = $this->getJson('api/sale/1');
+
+        $response->assertStatus(200);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_get_sale_by_id_return_404_error_when_sale_not_exist()
+    {
+        $responseContent = [
+            "message" => 'Sale not found!'
+        ];
+
+        DB::shouldReceive('table->join->select->where->get')->once()->andReturn([]);
+
+        $response = $this->getJson('api/sale/99');
 
         $response->assertStatus(404);
         $response->assertExactJson($responseContent);
