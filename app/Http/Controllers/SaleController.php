@@ -13,7 +13,17 @@ class SaleController extends Controller
      */
     public function index()
     {
-        //
+        // QUERY BRUTA
+        // $sales = DB::select(
+        //     'select sa.id as saleId, sa.created_at as date, sa_pr.product_id as productId, sa_pr.quantity as quantity from sales as sa join sales_products as sa_pr on sa.id = sa_pr.sale_id'
+        // );
+        // QUERY BUILDER
+        $sales = DB::table('sales as sa')
+            ->join('sales_products as sa_pr', 'sa.id', '=', 'sa_pr.sale_id')
+            ->select('sa.id as sale_id', 'sa.created_at as date', 'sa_pr.product_id', 'sa_pr.quantity')
+            ->get();
+        Log::debug('sales', [$sales]);
+        return response()->json($sales, 200);
     }
 
     /**
