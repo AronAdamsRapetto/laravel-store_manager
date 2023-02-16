@@ -22,7 +22,7 @@ class SaleController extends Controller
             ->join('sales_products as sa_pr', 'sa.id', '=', 'sa_pr.sale_id')
             ->select('sa.id as sale_id', 'sa.created_at as date', 'sa_pr.product_id', 'sa_pr.quantity')
             ->get();
-        Log::debug('sales', [$sales]);
+
         return response()->json($sales, 200);
     }
 
@@ -47,7 +47,19 @@ class SaleController extends Controller
      */
     public function show($id)
     {
-        //
+        $sales = DB::table('sales as sa')
+            ->join('sales_products as sa_pr', 'sa.id', '=', 'sa_pr.sale_id')
+            ->select('sa.created_at as date', 'sa_pr.product_id', 'sa_pr.quantity')
+            ->where('sa.id', '=', $id)
+            ->get();
+
+        if (count($sales) === 0) {
+            return response()->json([
+                "message" => 'Sale not found!'
+            ], 404);
+        }
+
+        return response()->json($sales, 200);
     }
 
     /**
