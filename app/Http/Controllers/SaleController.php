@@ -75,6 +75,16 @@ class SaleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $sale = DB::select('select * from sales where id = ?', [$id]);
+
+        if (!count($sale)) {
+            return response()->json([
+                "message" => "Sale not fount!"
+            ]);
+        }
+
+        DB::delete('delete from sales where id = ?', [$id]);
+
+        return response('No-content', 204);
     }
 }
