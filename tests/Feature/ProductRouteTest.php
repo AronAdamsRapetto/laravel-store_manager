@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -53,7 +51,7 @@ class ProductRouteTest extends TestCase
     public function test_if_get_product_by_id_return_a_error_message_with_status_404_when_product_not_exist(): void
     {
 
-        $responseContent = ["message" => "Product not found"];
+        $responseContent = ["message" => "Product not found!"];
 
         DB::shouldReceive("select")->once()->andReturn([]);
 
