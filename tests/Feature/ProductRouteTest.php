@@ -82,7 +82,7 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(201);
     }
 
-    public function test_if_return_an_error_status_400_when_missing_name_field_with(): void
+    public function test_if_return_an_error_status_400_when_missing_name_field(): void
     {
         $responseContent = [
             "message" => "name is required"

@@ -19,8 +19,8 @@ class SaleProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'sale_id' => Sale::inRandomOrder()->first(),
-            'product_id' => Product::inRandomOrder()->first(),
+            'sale_id' => Sale::pluck('id')->random(), // forma de extrair um id aleatório
+            'product_id' => Product::inRandomOrder()->first(), // outra forma de extrair
             'quantity' => $this->faker->numberBetween(1, 10),
         ];
     }
