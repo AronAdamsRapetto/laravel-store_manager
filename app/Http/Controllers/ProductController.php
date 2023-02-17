@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -58,5 +59,15 @@ class ProductController extends Controller
         DB::delete('delete from products where id = ?', [$id]);
 
         return response('No-Content', 204);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->query('q');
+
+        $products = DB::select('select * from products where name like ?', ["%{$query}%"]);
+        Log::debug("products", $products);
+
+        return response()->json($products, 200);
     }
 }

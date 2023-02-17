@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::controller(ProductController::class)->group(function () {
+    Route::get('/product/search', 'search');
     Route::get('/product', 'index');
     Route::get('/product/{id}', 'show')->middleware('consultProduct');
     Route::post('/product', 'store')->middleware('verifyProduct');
