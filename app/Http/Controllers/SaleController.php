@@ -79,8 +79,8 @@ class SaleController extends Controller
 
         if (!count($sale)) {
             return response()->json([
-                "message" => "Sale not fount!"
-            ]);
+                "message" => "Sale not found!"
+            ], 404);
         }
 
         DB::delete('delete from sales where id = ?', [$id]);

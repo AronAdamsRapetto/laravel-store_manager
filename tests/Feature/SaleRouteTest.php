@@ -183,4 +183,30 @@ class SaleRouteTest extends TestCase
         $response->assertStatus(404);
         $response->assertExactJson($responseContent);
     }
+
+    public function test_if_route_delete_sale_return_nothing_with_status_204()
+    {
+        DB::shouldReceive('select')->once()->andReturn(["some sale"]);
+        DB::shouldReceive('delete')->once();
+
+        $response = $this->deleteJson('/api/sale/1');
+
+        $response->assertStatus(204);
+        $response->assertNoContent();
+    }
+
+    public function test_if_route_delete_sale_return_404_error_when_sale_not_exists()
+    {
+        $responseContent = [
+            'message' => 'Sale not found!'
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn([]);
+        DB::shouldReceive('delete')->once();
+
+        $response = $this->deleteJson('/api/sale/1');
+
+        $response->assertStatus(404);
+        $response->assertExactJson($responseContent);
+    }
 }
