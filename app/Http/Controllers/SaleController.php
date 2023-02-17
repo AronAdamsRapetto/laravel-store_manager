@@ -67,7 +67,27 @@ class SaleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $sale = DB::select('select * from sales where id = ?', [$id]);
+
+        if (!count($sale)) {
+            return response()->json([
+                'message' => 'Sale not found!'
+            ]);
+        }
+
+        $salesToUpdate = $request->all();
+
+        foreach ($salesToUpdate as $sale) {
+            DB::update(
+                'update sales_products set quantity = ? where sale_id = ? and product_id = ?',
+                [$sale['quantity'], $id, $sale["productId"]]
+            );
+        }
+
+        return response()->json([
+            "saleId" => $id,
+            "itemsSold" => $salesToUpdate
+        ]);
     }
 
     /**

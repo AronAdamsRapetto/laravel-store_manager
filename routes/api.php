@@ -33,4 +33,5 @@ Route::controller(SaleController::class)->group(function () {
     Route::get('/sale', 'index');
     Route::get('/sale/{id}', 'show');
     Route::delete('/sale/{id}', 'destroy');
+    Route::put('/sale/{id}', 'update')->middleware(['verifySale', 'consultProduct']);;
 });
