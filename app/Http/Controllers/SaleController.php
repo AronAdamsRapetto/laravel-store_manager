@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class SaleController extends Controller
 {
@@ -72,7 +71,7 @@ class SaleController extends Controller
         if (!count($sale)) {
             return response()->json([
                 'message' => 'Sale not found!'
-            ]);
+            ], 404);
         }
 
         $salesToUpdate = $request->all();
@@ -85,9 +84,9 @@ class SaleController extends Controller
         }
 
         return response()->json([
-            "saleId" => $id,
+            "saleId" => intval($id),
             "itemsSold" => $salesToUpdate
-        ]);
+        ], 200);
     }
 
     /**

@@ -2,8 +2,6 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
@@ -205,6 +203,134 @@ class SaleRouteTest extends TestCase
         DB::shouldReceive('delete')->once();
 
         $response = $this->deleteJson('/api/sale/1');
+
+        $response->assertStatus(404);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_update_sale_return_the_sale_updated_with_status_200()
+    {
+
+        $requestContent = [
+            [
+                "productId" => 1,
+                "quantity" => 10
+            ],
+            [
+                "productId" => 2,
+                "quantity" => 50
+            ]
+        ];
+
+        $responseContent = [
+            "saleId" => 1,
+            "itemsSold" => $requestContent
+        ];
+
+        DB::shouldReceive('select')->times(2)->andReturn(["some product"]);
+        DB::shouldReceive('select')->once()->andReturn(["some sale"]);
+        DB::shouldReceive('update')->times(2);
+
+        $response = $this->putJson('/api/sale/1', $requestContent);
+
+        $response->assertStatus(200);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_update_sale_return_error_404_when_sale_not_exist()
+    {
+
+        $requestContent = [
+            [
+                "productId" => 1,
+                "quantity" => 10
+            ],
+            [
+                "productId" => 2,
+                "quantity" => 50
+            ]
+        ];
+
+        $responseContent = [
+            "message" => "Sale not found!"
+        ];
+
+        DB::shouldReceive('select')->times(2)->andReturn(["some product"]);
+        DB::shouldReceive('select')->once()->andReturn([]);
+
+        $response = $this->putJson('/api/sale/99', $requestContent);
+
+        $response->assertStatus(404);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_update_sale_return_error_400_when_some_productId_is_missing()
+    {
+
+        $requestContent = [
+            [
+                "quantity" => 10
+            ],
+            [
+                "productId" => 2,
+                "quantity" => 50
+            ]
+        ];
+
+        $responseContent = [
+            "message" => "productId is required"
+        ];
+
+        $response = $this->putJson('/api/sale/1', $requestContent);
+
+        $response->assertStatus(400);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_update_sale_return_error_400_when_some_quantity_is_missing()
+    {
+
+        $requestContent = [
+            [
+                "productId" => 1,
+                "quantity" => 10
+            ],
+            [
+                "productId" => 2,
+            ]
+        ];
+
+        $responseContent = [
+            "message" => "quantity is required"
+        ];
+
+        $response = $this->putJson('/api/sale/1', $requestContent);
+
+        $response->assertStatus(400);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_route_update_sale_return_error_404_when_some_product_not_exist()
+    {
+
+        $requestContent = [
+            [
+                "productId" => 99,
+                "quantity" => 10
+            ],
+            [
+                "productId" => 2,
+                "quantity" => 50
+            ]
+        ];
+
+        $responseContent = [
+            "message" => "Product not found!"
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn([]);
+
+        $response = $this->putJson('/api/sale/1', $requestContent);
 
         $response->assertStatus(404);
         $response->assertExactJson($responseContent);
