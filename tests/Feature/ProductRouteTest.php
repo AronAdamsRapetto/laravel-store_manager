@@ -198,4 +198,46 @@ class ProductRouteTest extends TestCase
         $response->assertStatus(404);
         $response->assertExactJson($responseContent);
     }
+
+    public function test_if_get_product_by_query_param_return_the_products_with_status_200()
+    {
+        $responseContent = [
+            [
+                "id" => 2,
+                "name" => "Traje de encolhimento"
+            ]
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn($responseContent);
+
+        $response = $this->getJson('api/product/search?q=traje');
+
+        $response->assertStatus(200);
+        $response->assertExactJson($responseContent);
+    }
+
+    public function test_if_get_product_by_query_param_with_empty_query_return_all_the_products_with_status_200()
+    {
+        $responseContent = [
+            [
+                "id" => 1,
+                "name" => "Martelo de Thor"
+            ],
+            [
+                "id" => 2,
+                "name" => "Traje de encolhimento"
+            ],
+            [
+                "id" => 3,
+                "name" => "Escudo do Capitão América"
+            ]
+        ];
+
+        DB::shouldReceive('select')->once()->andReturn($responseContent);
+
+        $response = $this->getJson('api/product/search?q=');
+
+        $response->assertStatus(200);
+        $response->assertExactJson($responseContent);
+    }
 }
